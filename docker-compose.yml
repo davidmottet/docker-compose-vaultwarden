@@ -1,0 +1,26 @@
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    volumes:
+      - /var/docker-volumes/vaultwarden/data/:/data/
+    # ports:
+    #   - XXXX:80
+    environment:
+      - DOMAIN=https://vaultwarden.mercadie.com
+      - LOGIN_RATELIMIT_MAX_BURST=10
+      - LOGIN_RATELIMIT_SECONDS=60
+      - ADMIN_RATELIMIT_MAX_BURST=10
+      - ADMIN_RATELIMIT_SECONDS=60
+      - ADMIN_TOKEN=j4Ge4MJ4H3a3ss
+      - SENDS_ALLOWED=true
+      - EMERGENCY_ACCESS_ALLOWED=true
+      - WEB_VAULT_ENABLED=true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vaultwarden.rule=Host(`vaultwarden.mercadie.com`)"
+      - "traefik.http.routers.vaultwarden.entrypoints=websecure"
+      - "traefik.http.routers.vaultwarden.tls.certresolver=myresolver"
+      - "traefik.http.services.vaultwarden.loadbalancer.server.port=80"
+      - "traefik.http.routers.vaultwarden.middlewares=redirect-to-https"
